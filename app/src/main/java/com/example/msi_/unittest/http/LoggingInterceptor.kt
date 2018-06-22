@@ -2,6 +2,8 @@ package com.example.msi_.unittest.http
 
 import android.text.TextUtils
 import android.util.Log
+import com.elvishew.xlog.LogLevel
+import com.elvishew.xlog.XLog
 import okhttp3.FormBody
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -13,18 +15,18 @@ import java.net.URLDecoder
  *@Description：
  **/
 class LoggingInterceptor:Interceptor{
-    private val tag = "http"
     override fun intercept(chain: Interceptor.Chain): Response {
+        XLog.init(LogLevel.ALL)
         val request = chain.request()
         val startTime = System.currentTimeMillis()
         val response = chain.proceed(request)
         val endTime = System.currentTimeMillis()
         val duration = endTime - startTime
         val mediaType = response.body()!!.contentType()
-        Log.d(tag,"\n")
-        Log.d(tag,"----------Start----------------")
-        Log.d(tag,"| RequestUrl:"+request.url())
-        Log.d(tag,"| RequestHeaders:\n" + request.headers())
+        XLog.d("\n")
+        XLog.d("----------Start----------------")
+        XLog.d("| RequestUrl:${request.url()}")
+        XLog.d("| RequestHeaders:\n" + request.headers())
 
         val method = request.method()
         if ("POST" == method){
@@ -40,15 +42,27 @@ class LoggingInterceptor:Interceptor{
                 if (sb.isNotEmpty()){
                     sb.delete(sb.length-1,sb.length)
                 }
-                Log.d(tag,"| RequestParams:\n")
-                Log.d(tag,"{+$sb+}")
+                XLog.d("| RequestParams:\n")
+                try {
+                    XLog.json(sb.toString())
+                } finally {
+                    XLog.d(sb.toString())
+                }
             }
         }
-        Log.d(tag,"| ResponseHeaders:\n"+response.headers())
+        XLog.d("| ResponseHeaders:\n"+response.headers())
+        XLog.d("-----body start-----")
         val content = response.body()!!.toString()
-        Log.d(tag,"{+$content+}")
-
-        Log.d(tag,"----------End:${duration}毫秒----------")
+        try {
+            XLog.json(content)
+        } catch (e:Exception){
+            XLog.e(e)
+        }finally {
+            XLog.d(content)
+        }
+        XLog.d("-----body end-----")
+        XLog.d("\n")
+        XLog.d("----------End:${duration}毫秒----------")
         return response.newBuilder()
                 .body(okhttp3.ResponseBody.create(mediaType,content))
                 .build()

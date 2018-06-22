@@ -6,6 +6,7 @@ import java.util.logging.Logger
 import java.util.logging.LoggingMXBean
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 /**
  *@Author：ZC
@@ -13,21 +14,21 @@ import retrofit2.converter.gson.GsonConverterFactory
  *@Description：
  **/
 
-class GithubService{
+object GithubService{
     private val retrofit = Retrofit.Builder()
             .baseUrl(GithubApi.BASE_URL)
-            .client(getOkHttpClient)
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
 
-    private val getOkHttpClient:OkHttpClient
+    private val okHttpClient:OkHttpClient
         get() = OkHttpClient.Builder()
                 .addInterceptor(LoggingInterceptor())
+                .connectTimeout(20,TimeUnit.SECONDS)
                 .build()
 
     fun createGithubService():GithubApi{
         return retrofit.create(GithubApi::class.java)
     }
-
 }
