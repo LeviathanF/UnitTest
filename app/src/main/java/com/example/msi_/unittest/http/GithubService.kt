@@ -1,5 +1,6 @@
 package com.example.msi_.unittest.http
 
+import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.util.logging.Logger
@@ -15,10 +16,14 @@ import java.util.concurrent.TimeUnit
  **/
 
 object GithubService{
+    private val gson = GsonBuilder()
+            .setLenient()
+            .create()
+
     private val retrofit = Retrofit.Builder()
             .baseUrl(GithubApi.BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
 

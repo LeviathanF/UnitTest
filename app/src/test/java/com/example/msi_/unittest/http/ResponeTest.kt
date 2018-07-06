@@ -44,8 +44,8 @@ class ResponeTest{
         RxAndroidPlugins.setMainThreadSchedulerHandler{Schedulers.trampoline()}
     }
 
-    @Test
-    fun getUserTest(){
+
+    @Test fun getUserTest(){
         GithubService.createGithubService()
                 .getUesr("simplezhli")
                 .subscribeOn(Schedulers.io())

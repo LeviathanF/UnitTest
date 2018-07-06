@@ -52,7 +52,7 @@ class LoggingInterceptor:Interceptor{
         }
         XLog.d("| ResponseHeaders:\n"+response.headers())
         XLog.d("-----body start-----")
-        val content = response.body()!!.toString()
+        val content = response.body()!!.string()
         try {
             XLog.json(content)
         } catch (e:Exception){
